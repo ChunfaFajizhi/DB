@@ -1,0 +1,22 @@
+package ca.fajizhi.DATABASE;
+import java.sql.*;
+public class GetData {
+	
+	public static void main(String args[]){
+		String url = "jdbc:postgresql://localhost:5432/gis_analysis";
+		
+		try (
+			Connection conn = DriverManager.getConnection(url, usr,password);
+			Statement statement=conn.createStatement();
+			ResultSet resultset=statement.executeQuery("select count(*) from tree_3857"))
+			{
+			 while (resultset.next()){
+				 System.out.print(resultset.getInt("count"));				 
+			 }
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		
+	}
