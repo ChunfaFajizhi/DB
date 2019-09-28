@@ -1,0 +1,120 @@
+package ca.fajizhi.DATABASE;
+
+import java.awt.BorderLayout;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
+
+
+public class TableConnectDB extends JPanel {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Connection missTreeConn = null;
+
+    public TableConnectDB() {
+        Vector<String> columnNames = new Vector<String>();
+        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+
+        try {
+            //  Connect to an postGreSQL Database
+            missTreeConn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/gis_analysis", usr, ps);
+
+            //  Read data from a table
+            String sql = "select distinct(botdesc) from tree_3857";
+            Statement treeStat = missTreeConn.createStatement();
+            ResultSet rs = treeStat.executeQuery(sql);
+            ResultSetMetaData mdOftree = rs.getMetaData();
+            int columns = mdOftree.getColumnCount();
+
+            //  Get column names
+            for (int i = 1; i <= columns; i++) {
+                columnNames.addElement(mdOftree.getColumnName(i));
+            }
+
+            //  Get row data
+            while (rs.next()) {
+                Vector row = new Vector<Object>(columns);
+
+                for (int i = 1; i <= columns; i++) {
+                    extracted(row).addElement(rs.getObject(i));
+                }
+
+                data.addElement(extracted(row));
+            }
+
+            rs.close();
+            treeStat.close();
+            missTreeConn.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        //  Create table with database data
+        JTable table = new JTable(data, columnNames) {
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Class<?> getColumnClass(int column) {
+                for (int row = 0; row < getRowCount(); row++) {
+                    Object SingleRecord = getValueAt(row, column);
+
+                    if (SingleRecord != null) {
+                        return SingleRecord.getClass();
+                    }
+                }
+
+                return Object.class;
+            }
+        };
+        
+        
+        
+        JScrollPane scrollPane = new JScrollPane(table);        
+        add(scrollPane);
+        
+        
+      //add autosize
+      // table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        
+    }
+
+	private Vector extracted(Vector row) {
+		return row;
+	}
+
+    public static void main(String[] args) {
+
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                JFrame frame = new JFrame("Trees_Mississauga");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                //Create and set up the content pane.
+                
+                TableConnectDB newContentPane = new TableConnectDB();
+                newContentPane.setOpaque(true); //content panes must be opaque                
+                frame.setContentPane(newContentPane);
+                
+                
+                //Display the window.
+                frame.pack();
+                frame.setVisible(true);
+            }
+        });
+
+    }
+}
