@@ -13,16 +13,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-
-
 public class TableConnectDB extends JPanel {
-
-    /**
+        /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private Connection missTreeConn = null;
-
     public TableConnectDB() {
         Vector<String> columnNames = new Vector<String>();
         Vector<Vector<Object>> data = new Vector<Vector<Object>>();
@@ -30,7 +26,6 @@ public class TableConnectDB extends JPanel {
         try {
             //  Connect to an postGreSQL Database
             missTreeConn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/gis_analysis", usr, ps);
-
             //  Read data from a table
             String sql = "select distinct(botdesc) from tree_3857";
             Statement treeStat = missTreeConn.createStatement();
@@ -63,11 +58,9 @@ public class TableConnectDB extends JPanel {
 
         //  Create table with database data
         JTable table = new JTable(data, columnNames) {
-            /**
-			 * 
-			 */
+            /*
+	     */
 			private static final long serialVersionUID = 1L;
-
 			public Class<?> getColumnClass(int column) {
                 for (int row = 0; row < getRowCount(); row++) {
                     Object SingleRecord = getValueAt(row, column);
@@ -80,24 +73,17 @@ public class TableConnectDB extends JPanel {
                 return Object.class;
             }
         };
-        
-        
-        
+              
         JScrollPane scrollPane = new JScrollPane(table);        
         add(scrollPane);
-        
-        
       //add autosize
       // table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         
     }
-
 	private Vector extracted(Vector row) {
 		return row;
 	}
-
     public static void main(String[] args) {
-
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame("Trees_Mississauga");
@@ -107,9 +93,7 @@ public class TableConnectDB extends JPanel {
                 
                 TableConnectDB newContentPane = new TableConnectDB();
                 newContentPane.setOpaque(true); //content panes must be opaque                
-                frame.setContentPane(newContentPane);
-                
-                
+                frame.setContentPane(newContentPane);               
                 //Display the window.
                 frame.pack();
                 frame.setVisible(true);
