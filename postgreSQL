@@ -1,0 +1,5 @@
+sudo -u postgres psql
+#Check user
+postgres=# \du
+#more info
+postgres=# \du+
